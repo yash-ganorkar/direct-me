@@ -43,7 +43,9 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>UIViewControllerBasedStatusBarAppearance</key>
-	<false/>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Show location on the map</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Use location for navigation</string>
 </dict>
 </plist>

@@ -9,14 +9,26 @@
 #import <UIKit/UIKit.h>
 #import <MapKit/MapKit.h>
 
-@interface ViewController : UIViewController
+@protocol DestinationAddressDelegate <NSObject>
+
+- (void) didFinishEnteringItem:(NSString *)item;
+
+@end
+
+
+@interface ViewController : UIViewController<MKMapViewDelegate, CLLocationManagerDelegate, DestinationAddressDelegate> {
+    
+    CLLocationManager *locationManager;
+    
+    MKUserLocation *sourceLocation;
+    MKUserLocation *destinationLocation;
+    NSArray *array;
+}
 @property (weak, nonatomic) IBOutlet MKMapView *mapKit;
 
 - (IBAction)standard:(id)sender;
 - (IBAction)satellite:(id)sender;
 - (IBAction)hybrid:(id)sender;
-- (IBAction)locate:(id)sender;
-
 
 
 - (IBAction)directions:(id)sender;

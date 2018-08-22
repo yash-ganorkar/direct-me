@@ -15,14 +15,22 @@
 
 @end
 
+@protocol HandleMapSearch
+- (void) dropPinZoomIn:(MKPlacemark *)placeMark;
+@end
 
-@interface ViewController : UIViewController<MKMapViewDelegate, CLLocationManagerDelegate, DestinationAddressDelegate> {
+
+@interface ViewController : UIViewController<MKMapViewDelegate, CLLocationManagerDelegate, DestinationAddressDelegate, HandleMapSearch> {
     
     CLLocationManager *locationManager;
     
     MKUserLocation *sourceLocation;
     MKUserLocation *destinationLocation;
     NSArray *array;
+    
+    UISearchController *resultSearchController;
+    
+    MKPlacemark *selectedPin;
 }
 @property (weak, nonatomic) IBOutlet MKMapView *mapKit;
 
@@ -32,6 +40,7 @@
 
 
 - (IBAction)directions:(id)sender;
+- (IBAction)test:(id)sender;
 
 @end
 

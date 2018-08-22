@@ -9,6 +9,8 @@
 #import "ViewController.h"
 #import "MapPin.h"
 #import "AddressViewController.h"
+#import "TableViewController.h"
+#import "LocationSearchTable.h"
 
 @interface ViewController () <MKMapViewDelegate> {
     MKPolyline *routeOverlay;
@@ -25,10 +27,31 @@ MKRoute *route;
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
-    [self configureLocationServices];
     
+    [self configureLocationServices];
     destination = [[MKPointAnnotation alloc] init];
-    routeOverlaySet = NO;
+//    routeOverlaySet = NO;
+    
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    LocationSearchTable *locationSearchTable = [storyboard instantiateViewControllerWithIdentifier:@"LocationSearchTable"];
+    
+    resultSearchController = [[UISearchController alloc] initWithSearchResultsController:locationSearchTable];
+    
+    resultSearchController.searchResultsUpdater = locationSearchTable;
+    
+    UISearchBar *searchBar = resultSearchController.searchBar;
+    [searchBar sizeToFit];
+    [searchBar setPlaceholder:@"Search For Places"];
+    
+    [self.navigationItem setTitleView:resultSearchController.searchBar];
+    resultSearchController.hidesNavigationBarDuringPresentation=NO;
+    resultSearchController.dimsBackgroundDuringPresentation = YES;
+    self.definesPresentationContext = YES;
+    
+    locationSearchTable.mapView = self.mapKit;
+    
+    locationSearchTable.handleMapSearchDelegate = self;
+    
 }
 
 -(void) configureLocationServices{
@@ -42,7 +65,7 @@ MKRoute *route;
     
     [locationManager startUpdatingLocation];
     
-    self.mapKit.showsUserLocation = YES;
+    //self.mapKit.showsUserLocation = YES;
 }
 
 - (void)zoomToLatestLocation:(MKUserLocation *)sourceLocation{
@@ -55,11 +78,6 @@ MKRoute *route;
 }
 - (void) constructRoute:(MKUserLocation *)destinationLocation{
     
-    NSLog(@"Source Latitude Coordinates -> %@", [NSString stringWithFormat:@"%f", sourceLocation.coordinate.latitude]);
-    NSLog(@"Source Longitude Coordinates -> %@", [NSString stringWithFormat:@"%f", sourceLocation.coordinate.longitude]);
-    NSLog(@"Destination Latitude Coordinates -> %@", [NSString stringWithFormat:@"%f", destinationLocation.coordinate.latitude]);
-    NSLog(@"Destination Latitude Coordinates -> %@", [NSString stringWithFormat:@"%f", destinationLocation.coordinate.longitude]);
-
     MKDirectionsRequest *directionsRequest = [MKDirectionsRequest new];
     
     // Make the source
@@ -77,10 +95,15 @@ MKRoute *route;
     
     MKDirections *directions = [[MKDirections alloc] initWithRequest:directionsRequest];
     
+    
     [directions calculateDirectionsWithCompletionHandler:^(MKDirectionsResponse *response, NSError *error) {
         if (error) {
             NSLog(@"There was an error getting your directions");
             return;
+        }
+        
+        for (MKRoute *routes in response.routes) {
+            NSLog(@"%@", [NSString stringWithFormat:@"%f", routes.distance]);
         }
         
         [self plotRouteOnMap:response.routes];
@@ -128,11 +151,22 @@ MKRoute *route;
     
 }
 
+- (IBAction)test:(id)sender {
+    [self performSegueWithIdentifier:@"testIdentifier" sender:self];
+}
+
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
-    AddressViewController *avc = [segue destinationViewController];
     ViewController *vc = [segue sourceViewController];
+
+    if([segue.identifier  isEqual: @"addressSelector"]){
+        AddressViewController *avc = [segue destinationViewController];
+        
+        avc.delegate = vc;
+    }
     
-    avc.delegate = vc;
+    else if([segue.identifier  isEqual: @"testIdentifier"]){
+        TableViewController *tvc = [segue destinationViewController];
+    }
 }
 
 - (void)didFinishEnteringItem:(NSString *)item
@@ -188,4 +222,73 @@ MKRoute *route;
     return  renderer;
     
 }
+- (void)dropPinZoomIn:(MKPlacemark *)placeMark {
+    selectedPin = placeMark;
+    [self.mapKit removeAnnotations:self.mapKit.annotations];
+    
+    MKPointAnnotation *annotation = [[MKPointAnnotation alloc] init];
+    
+    [annotation setCoordinate:placeMark.coordinate];
+    [annotation setTitle:placeMark.name];
+    
+    NSString *city = placeMark.locality;
+    NSString *state = placeMark.administrativeArea;
+    if(city && state){
+        [annotation setSubtitle:[NSString stringWithFormat:@"%@ %@", city, state]];
+    }
+    
+    [self.mapKit addAnnotation:annotation];
+    
+    MKCoordinateSpan span = MKCoordinateSpanMake(0.05, 0.05);
+    MKCoordinateRegion region = MKCoordinateRegionMake(placeMark.coordinate, span);
+    
+    [self.mapKit setRegion:region animated:YES];
+    
+}
+
+- (MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id<MKAnnotation>)annotation{
+    if([annotation isKindOfClass:MKUserLocation.class]) {
+        return nil;
+    }
+
+    NSString *reuseId = @"pin";
+    MKPinAnnotationView *pinView = (MKPinAnnotationView *)[mapView  dequeueReusableAnnotationViewWithIdentifier:reuseId];
+
+    if (!pinView) {
+        pinView=[[MKPinAnnotationView alloc]initWithAnnotation:annotation reuseIdentifier:reuseId];
+    }
+    
+    [pinView setPinTintColor:[UIColor orangeColor]];
+    pinView.canShowCallout = YES;
+
+    UIButton *button = [UIButton buttonWithType:UIButtonTypeSystem];
+    [button setFrame:CGRectMake(CGPointZero.x, CGPointZero.y, 30, 30)];
+    [button setBackgroundImage:[UIImage imageNamed:@"car"] forState:UIControlStateNormal];
+    [button addTarget:self action:@selector(getDirections) forControlEvents:UIControlEventTouchUpInside];
+    [button sizeToFit];
+    
+    [pinView setLeftCalloutAccessoryView:button];
+    return pinView;
+}
+
+-(void)getDirections{
+    if (selectedPin) {
+        MKUserLocation *destinationLoc = [[MKUserLocation alloc] init];
+        
+        [destinationLoc setCoordinate:selectedPin.coordinate];
+        destinationLocation = destinationLoc;
+        
+        [self constructRoute:destinationLocation];
+        [self zoomOutToViewRoute];
+    }
+}
+
+-(void) zoomOutToViewRoute{
+    MKCoordinateSpan span = MKCoordinateSpanMake(1, 1);
+    MKCoordinateRegion region = MKCoordinateRegionMake(destinationLocation.coordinate, span);
+    
+    [self.mapKit setRegion:region animated:YES];
+
+}
+
 @end

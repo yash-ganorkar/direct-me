@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5844C00E2129FC48000EE25B /* TableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5844C00D2129FC48000EE25B /* TableViewController.m */; };
 		5844C011212A10F3000EE25B /* LocationSearchTable.m in Sources */ = {isa = PBXBuildFile; fileRef = 5844C010212A10F3000EE25B /* LocationSearchTable.m */; };
 		58ADAB29212728D5000BF341 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 58ADAB28212728D5000BF341 /* AppDelegate.m */; };
 		58ADAB2C212728D5000BF341 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 58ADAB2B212728D5000BF341 /* ViewController.m */; };
@@ -18,8 +17,6 @@
 		58ADAB41212728D7000BF341 /* Direct_MeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 58ADAB40212728D7000BF341 /* Direct_MeTests.m */; };
 		58ADAB4C212728D7000BF341 /* Direct_MeUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 58ADAB4B212728D7000BF341 /* Direct_MeUITests.m */; };
 		58ADAB5B21272BDB000BF341 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 58ADAB5A21272BDB000BF341 /* MapKit.framework */; };
-		58ADAB5E21273704000BF341 /* MapPin.m in Sources */ = {isa = PBXBuildFile; fileRef = 58ADAB5D21273704000BF341 /* MapPin.m */; };
-		58ADAB6121275885000BF341 /* AddressViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 58ADAB6021275885000BF341 /* AddressViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,8 +37,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		5844C00C2129FC48000EE25B /* TableViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TableViewController.h; sourceTree = "<group>"; };
-		5844C00D2129FC48000EE25B /* TableViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TableViewController.m; sourceTree = "<group>"; };
 		5844C00F212A10F3000EE25B /* LocationSearchTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LocationSearchTable.h; sourceTree = "<group>"; };
 		5844C010212A10F3000EE25B /* LocationSearchTable.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LocationSearchTable.m; sourceTree = "<group>"; };
 		58ADAB24212728D5000BF341 /* Direct-Me.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Direct-Me.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -61,10 +56,6 @@
 		58ADAB4B212728D7000BF341 /* Direct_MeUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Direct_MeUITests.m; sourceTree = "<group>"; };
 		58ADAB4D212728D7000BF341 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		58ADAB5A21272BDB000BF341 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
-		58ADAB5C21273704000BF341 /* MapPin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MapPin.h; sourceTree = "<group>"; };
-		58ADAB5D21273704000BF341 /* MapPin.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MapPin.m; sourceTree = "<group>"; };
-		58ADAB5F21275885000BF341 /* AddressViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AddressViewController.h; sourceTree = "<group>"; };
-		58ADAB6021275885000BF341 /* AddressViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AddressViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -121,12 +112,6 @@
 				58ADAB28212728D5000BF341 /* AppDelegate.m */,
 				58ADAB2A212728D5000BF341 /* ViewController.h */,
 				58ADAB2B212728D5000BF341 /* ViewController.m */,
-				58ADAB5C21273704000BF341 /* MapPin.h */,
-				58ADAB5D21273704000BF341 /* MapPin.m */,
-				58ADAB5F21275885000BF341 /* AddressViewController.h */,
-				58ADAB6021275885000BF341 /* AddressViewController.m */,
-				5844C00C2129FC48000EE25B /* TableViewController.h */,
-				5844C00D2129FC48000EE25B /* TableViewController.m */,
 				58ADAB2D212728D5000BF341 /* Main.storyboard */,
 				58ADAB30212728D7000BF341 /* Assets.xcassets */,
 				58ADAB32212728D7000BF341 /* LaunchScreen.storyboard */,
@@ -299,10 +284,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				58ADAB5E21273704000BF341 /* MapPin.m in Sources */,
-				5844C00E2129FC48000EE25B /* TableViewController.m in Sources */,
 				58ADAB2C212728D5000BF341 /* ViewController.m in Sources */,
-				58ADAB6121275885000BF341 /* AddressViewController.m in Sources */,
 				5844C011212A10F3000EE25B /* LocationSearchTable.m in Sources */,
 				58ADAB37212728D7000BF341 /* main.m in Sources */,
 				58ADAB29212728D5000BF341 /* AppDelegate.m in Sources */,

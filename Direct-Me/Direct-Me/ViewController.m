@@ -7,9 +7,6 @@
 //
 
 #import "ViewController.h"
-#import "MapPin.h"
-#import "AddressViewController.h"
-#import "TableViewController.h"
 #import "LocationSearchTable.h"
 
 @interface ViewController () <MKMapViewDelegate> {
@@ -26,12 +23,10 @@ MKRoute *route;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
-    
+
     [self configureLocationServices];
     destination = [[MKPointAnnotation alloc] init];
-//    routeOverlaySet = NO;
-    
+
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     LocationSearchTable *locationSearchTable = [storyboard instantiateViewControllerWithIdentifier:@"LocationSearchTable"];
     
@@ -55,6 +50,12 @@ MKRoute *route;
 }
 
 -(void) configureLocationServices{
+    
+    UILongPressGestureRecognizer *lpgr = [[UILongPressGestureRecognizer alloc]
+                                          initWithTarget:self action:@selector(handleLongPress:)];
+    lpgr.minimumPressDuration = 2.0; //user needs to press for 2 seconds
+    [self.mapKit addGestureRecognizer:lpgr];
+    
     locationManager.delegate = self;
     self.mapKit.delegate = self;
     locationManager = [[CLLocationManager alloc] init];
@@ -64,8 +65,6 @@ MKRoute *route;
     locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation;
     
     [locationManager startUpdatingLocation];
-    
-    //self.mapKit.showsUserLocation = YES;
 }
 
 - (void)zoomToLatestLocation:(MKUserLocation *)sourceLocation{
@@ -120,99 +119,97 @@ MKRoute *route;
     }
     
     routeOverlaySet = YES;
-    
-    for (MKRoute * singleRoute in route) {
-        routeOverlay = singleRoute.polyline;
-        [self.mapKit addOverlay:routeOverlay];
+    int smallestDistance = 0;
+    for(int i = 0; i < route.count; i++){
+        for(int j = 0; j < route.count; j++){
+            if(route[i].distance > route[j].distance) {
+                smallestDistance = j;
+            }
+        }
     }
-}
-
-- (IBAction)standard:(id)sender {
     
-    self.mapKit.mapType = MKMapTypeStandard;
+    NSLog(@"%@",[NSString stringWithFormat:@"Smallest Distnace -> %f", route[smallestDistance].distance]);
+            routeOverlay = route[smallestDistance].polyline;
+            [self.mapKit addOverlay:routeOverlay];
+
 }
 
-- (IBAction)satellite:(id)sender {
-    self.mapKit.mapType = MKMapTypeSatellite;
-}
 
-- (IBAction)hybrid:(id)sender {
-    self.mapKit.mapType = MKMapTypeHybrid;
-}
 -(void) mapView:(MKMapView *)mapView didUpdateUserLocation:(MKUserLocation *)userLocation {
     
     sourceLocation = userLocation;
     [self zoomToLatestLocation:sourceLocation];
     
 }
-- (IBAction)directions:(id)sender {
-    
-    [self performSegueWithIdentifier:@"addressSelector" sender:self];
-    
-}
 
-- (IBAction)test:(id)sender {
-    [self performSegueWithIdentifier:@"testIdentifier" sender:self];
+- (IBAction)mapViewTypeChanged:(id)sender {
+    if(self.segmentControll.selectedSegmentIndex == 0) {
+        self.mapKit.mapType = MKMapTypeStandard;
+    }else if (self.segmentControll.selectedSegmentIndex == 1) {
+        self.mapKit.mapType = MKMapTypeSatellite;
+    }else if (self.segmentControll.selectedSegmentIndex == 2){
+        self.mapKit.mapType = MKMapTypeHybrid;
+    }
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
-    ViewController *vc = [segue sourceViewController];
-
-    if([segue.identifier  isEqual: @"addressSelector"]){
-        AddressViewController *avc = [segue destinationViewController];
-        
-        avc.delegate = vc;
-    }
-    
-    else if([segue.identifier  isEqual: @"testIdentifier"]){
-        TableViewController *tvc = [segue destinationViewController];
-    }
+//    ViewController *vc = [segue sourceViewController];
+//
+//    if([segue.identifier  isEqual: @"addressSelector"]){
+//        AddressViewController *avc = [segue destinationViewController];
+//        
+//        avc.delegate = vc;
+//    }
+//    
+//    else if([segue.identifier  isEqual: @"testIdentifier"]){
+//        TableViewController *tvc = [segue destinationViewController];
+//    }
 }
 
-- (void)didFinishEnteringItem:(NSString *)item
-{
-    NSLog(@"This was returned from ViewControllerB %@",item);
-    
-    
-    for (id<MKAnnotation> annotation in self.mapKit.annotations)
-    {
-        [self.mapKit removeAnnotation:annotation];
-    }
-
-    
-    MKCoordinateRegion region;
-    MKCoordinateSpan span;
-    
-    span.latitudeDelta = 0.05;
-    span.longitudeDelta = 0.05;
-    
-    CLLocationCoordinate2D location;
-    
-    NSArray *loc = [[NSArray alloc]init];
-    
-    loc = [item componentsSeparatedByString:@","];
-    
-    location.latitude = [loc[0] doubleValue];
-    location.longitude = [loc[1] doubleValue];
-    
-    region.span = span;
-    region.center = location;
-    
-    [self.mapKit setRegion:region animated:YES];
-    
-    MapPin *ann = [[MapPin alloc] init];
-    ann.coordinate = location;
-    
-    [destination setCoordinate:location];
-    [self.mapKit addAnnotation:ann];
-    
-    MKUserLocation *destinationLoc = [[MKUserLocation alloc] init];
-    
-    [destinationLoc setCoordinate:ann.coordinate];
-    destinationLocation = destinationLoc;
-    
-    [self constructRoute:destinationLocation];
-}
+//- (void)didFinishEnteringItem:(NSString *)item
+//{
+//    NSLog(@"This was returned from ViewControllerB %@",item);
+//
+//
+//    for (id<MKAnnotation> annotation in self.mapKit.annotations)
+//    {
+//        [self.mapKit removeAnnotation:annotation];
+//    }
+//
+//
+//    MKCoordinateRegion region;
+//    MKCoordinateSpan span;
+//
+//    span.latitudeDelta = 0.05;
+//    span.longitudeDelta = 0.05;
+//
+//    CLLocationCoordinate2D location;
+//
+//    NSArray *loc = [[NSArray alloc]init];
+//
+//    loc = [item componentsSeparatedByString:@","];
+//
+//    location.latitude = [loc[0] doubleValue];
+//    location.longitude = [loc[1] doubleValue];
+//
+//    region.span = span;
+//    region.center = location;
+//
+//    [self.mapKit setRegion:region animated:YES];
+//
+//    MapPin *ann = [[MapPin alloc] init];
+//    ann.coordinate = location;
+//
+//    [destination setCoordinate:location];
+//    [self.mapKit addAnnotation:ann];
+//
+//    MKUserLocation *destinationLoc = [[MKUserLocation alloc] init];
+//    
+//    [destinationLoc setCoordinate:ann.coordinate];
+//    destinationLocation = destinationLoc;
+//
+//    [self constructRoute:destinationLocation];
+//}
 
 - (MKOverlayRenderer *)mapView:(MKMapView *)mapView rendererForOverlay:(id<MKOverlay>)overlay {
     
@@ -284,11 +281,43 @@ MKRoute *route;
 }
 
 -(void) zoomOutToViewRoute{
-    MKCoordinateSpan span = MKCoordinateSpanMake(1, 1);
+    MKCoordinateSpan span = MKCoordinateSpanMake(0.05, 0.05);
     MKCoordinateRegion region = MKCoordinateRegionMake(destinationLocation.coordinate, span);
+    
+    UISearchBar *searchBar = resultSearchController.searchBar;
+    [searchBar setText:@""];
     
     [self.mapKit setRegion:region animated:YES];
 
+}
+
+- (void)handleLongPress:(UIGestureRecognizer *)gestureRecognizer
+{
+    if (gestureRecognizer.state != UIGestureRecognizerStateBegan)
+        return;
+    
+    CGPoint touchPoint = [gestureRecognizer locationInView:self.mapKit];
+    CLLocationCoordinate2D touchMapCoordinate =
+    [self.mapKit convertPoint:touchPoint toCoordinateFromView:self.mapKit];
+    
+    CLGeocoder *geocoder = [[CLGeocoder alloc] init];
+    [geocoder reverseGeocodeLocation:[[CLLocation alloc] initWithLatitude:touchMapCoordinate.latitude longitude:touchMapCoordinate.longitude] completionHandler:^(NSArray *placemarks, NSError *error)
+     {
+         if (!placemarks) {
+             // handle error
+         }
+         else {
+             if(placemarks && placemarks.count > 0)
+             {
+                 CLPlacemark *placemark= [placemarks objectAtIndex:0];
+                 
+                 MKPlacemark *placeMark = [[MKPlacemark alloc] initWithPlacemark:placemark];
+                 
+                 [self dropPinZoomIn:placeMark];
+             }
+             
+         }
+     }];
 }
 
 @end

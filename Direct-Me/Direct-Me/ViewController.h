@@ -20,7 +20,7 @@
 @end
 
 
-@interface ViewController : UIViewController<MKMapViewDelegate, CLLocationManagerDelegate, DestinationAddressDelegate, HandleMapSearch> {
+@interface ViewController : UIViewController<MKMapViewDelegate, CLLocationManagerDelegate, HandleMapSearch> {
     
     CLLocationManager *locationManager;
     
@@ -33,14 +33,18 @@
     MKPlacemark *selectedPin;
 }
 @property (weak, nonatomic) IBOutlet MKMapView *mapKit;
+@property (weak, nonatomic) IBOutlet UISegmentedControl *segmentControll;
 
-- (IBAction)standard:(id)sender;
-- (IBAction)satellite:(id)sender;
-- (IBAction)hybrid:(id)sender;
+//- (IBAction)standard:(id)sender;
+//- (IBAction)satellite:(id)sender;
+//- (IBAction)hybrid:(id)sender;
+//
+//
+//- (IBAction)directions:(id)sender;
+//- (IBAction)test:(id)sender;
 
+- (IBAction)mapViewTypeChanged:(id)sender;
 
-- (IBAction)directions:(id)sender;
-- (IBAction)test:(id)sender;
 
 @end
 

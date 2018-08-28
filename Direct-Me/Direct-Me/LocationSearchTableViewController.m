@@ -1,21 +1,18 @@
 //
-//  TableViewController.m
+//  LocationSearchTableViewController.m
 //  Direct-Me
 //
 //  Created by Yash Ganorkar on 8/19/18.
 //  Copyright © 2018 Yash Ganorkar. All rights reserved.
 //
 
-#import "TableViewController.h"
+#import "LocationSearchTableViewController.h"
 
+@interface LocationSearchTableViewController ()
 
-@interface TableViewController ()
-{
-    NSArray<MKMapItem *> *mapItems;
-}
 @end
 
-@implementation TableViewController
+@implementation LocationSearchTableViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -25,12 +22,6 @@
     
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
-    
-    self.searchBar.delegate = self;
-}
-
-- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText{
-    
 }
 
 - (void)didReceiveMemoryWarning {
@@ -103,21 +94,5 @@
     // Pass the selected object to the new view controller.
 }
 */
-
-- (void)updateSearchResultsForSearchController:(UISearchController *)searchController{
-    NSString *searchText = self.searchBar.text;
-    NSLog(@"%@", searchText);
-    
-    MKLocalSearchRequest *localSearchRequest = [[MKLocalSearchRequest alloc] init];
-    
-    localSearchRequest.naturalLanguageQuery = searchText;
-    
-    MKLocalSearch *localSearch = [[MKLocalSearch alloc] initWithRequest:localSearchRequest];
-    
-    [localSearch startWithCompletionHandler:^(MKLocalSearchResponse * _Nullable response, NSError * _Nullable error) {
-        self->mapItems = response.mapItems;
-    }];
-}
-
 
 @end

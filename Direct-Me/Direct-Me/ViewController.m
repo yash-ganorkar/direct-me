@@ -8,6 +8,7 @@
 
 #import "ViewController.h"
 #import "LocationSearchTable.h"
+#import "BottomSheetViewController.h"
 
 @interface ViewController () <MKMapViewDelegate> {
     MKPolyline *routeOverlay;
@@ -15,12 +16,19 @@
     BOOL routeOverlaySet;
 }
     @property (weak, nonatomic) NSString *data;
+@property (weak,nonatomic) NSString *destinationCity;
+@property (weak,nonatomic) NSString *destinationName;
+@property (weak,nonatomic) NSString *destinationState;
 @end
 
 @implementation ViewController
 MKPointAnnotation *destination;
 MKRoute *route;
 
+- (void)viewDidAppear:(BOOL)animated{
+    [self viewDidLoad];
+    
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
 
@@ -47,6 +55,9 @@ MKRoute *route;
     
     locationSearchTable.handleMapSearchDelegate = self;
     
+    BottomSheetViewController *bvc = [[BottomSheetViewController alloc] init];
+    
+    [self setHandleRoutesDelegate:bvc];
 }
 
 -(void) configureLocationServices{
@@ -106,6 +117,7 @@ MKRoute *route;
         }
         
         [self plotRouteOnMap:response.routes];
+        [self addBottomSheetView];
     }];
 }
 
@@ -118,18 +130,10 @@ MKRoute *route;
         }
     }
     
-    routeOverlaySet = YES;
-    int smallestDistance = 0;
-    for(int i = 0; i < route.count; i++){
-        for(int j = 0; j < route.count; j++){
-            if(route[i].distance > route[j].distance) {
-                smallestDistance = j;
-            }
-        }
-    }
-    
-    NSLog(@"%@",[NSString stringWithFormat:@"Smallest Distnace -> %f", route[smallestDistance].distance]);
-            routeOverlay = route[smallestDistance].polyline;
+    [self.handleRoutesDelegate listRoutes:route];
+
+    NSLog(@"%@",[NSString stringWithFormat:@"Smallest Distnace -> %f", route[0].distance]);
+            routeOverlay = route[0].polyline;
             [self.mapKit addOverlay:routeOverlay];
 
 }
@@ -139,7 +143,6 @@ MKRoute *route;
     
     sourceLocation = userLocation;
     [self zoomToLatestLocation:sourceLocation];
-    
 }
 
 - (IBAction)mapViewTypeChanged:(id)sender {
@@ -153,63 +156,7 @@ MKRoute *route;
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
-//    ViewController *vc = [segue sourceViewController];
-//
-//    if([segue.identifier  isEqual: @"addressSelector"]){
-//        AddressViewController *avc = [segue destinationViewController];
-//        
-//        avc.delegate = vc;
-//    }
-//    
-//    else if([segue.identifier  isEqual: @"testIdentifier"]){
-//        TableViewController *tvc = [segue destinationViewController];
-//    }
 }
-
-//- (void)didFinishEnteringItem:(NSString *)item
-//{
-//    NSLog(@"This was returned from ViewControllerB %@",item);
-//
-//
-//    for (id<MKAnnotation> annotation in self.mapKit.annotations)
-//    {
-//        [self.mapKit removeAnnotation:annotation];
-//    }
-//
-//
-//    MKCoordinateRegion region;
-//    MKCoordinateSpan span;
-//
-//    span.latitudeDelta = 0.05;
-//    span.longitudeDelta = 0.05;
-//
-//    CLLocationCoordinate2D location;
-//
-//    NSArray *loc = [[NSArray alloc]init];
-//
-//    loc = [item componentsSeparatedByString:@","];
-//
-//    location.latitude = [loc[0] doubleValue];
-//    location.longitude = [loc[1] doubleValue];
-//
-//    region.span = span;
-//    region.center = location;
-//
-//    [self.mapKit setRegion:region animated:YES];
-//
-//    MapPin *ann = [[MapPin alloc] init];
-//    ann.coordinate = location;
-//
-//    [destination setCoordinate:location];
-//    [self.mapKit addAnnotation:ann];
-//
-//    MKUserLocation *destinationLoc = [[MKUserLocation alloc] init];
-//    
-//    [destinationLoc setCoordinate:ann.coordinate];
-//    destinationLocation = destinationLoc;
-//
-//    [self constructRoute:destinationLocation];
-//}
 
 - (MKOverlayRenderer *)mapView:(MKMapView *)mapView rendererForOverlay:(id<MKOverlay>)overlay {
     
@@ -228,10 +175,11 @@ MKRoute *route;
     [annotation setCoordinate:placeMark.coordinate];
     [annotation setTitle:placeMark.name];
     
-    NSString *city = placeMark.locality;
-    NSString *state = placeMark.administrativeArea;
-    if(city && state){
-        [annotation setSubtitle:[NSString stringWithFormat:@"%@ %@", city, state]];
+    self.destinationName = placeMark.name;
+    self.destinationCity = placeMark.locality;
+    self.destinationState = placeMark.administrativeArea;
+    if(self.destinationCity && self.destinationState){
+        [annotation setSubtitle:[NSString stringWithFormat:@"%@ %@", self.destinationCity, self.destinationState]];
     }
     
     [self.mapKit addAnnotation:annotation];
@@ -247,17 +195,17 @@ MKRoute *route;
     if([annotation isKindOfClass:MKUserLocation.class]) {
         return nil;
     }
-
+    
     NSString *reuseId = @"pin";
     MKPinAnnotationView *pinView = (MKPinAnnotationView *)[mapView  dequeueReusableAnnotationViewWithIdentifier:reuseId];
-
+    
     if (!pinView) {
         pinView=[[MKPinAnnotationView alloc]initWithAnnotation:annotation reuseIdentifier:reuseId];
     }
     
     [pinView setPinTintColor:[UIColor orangeColor]];
     pinView.canShowCallout = YES;
-
+    
     UIButton *button = [UIButton buttonWithType:UIButtonTypeSystem];
     [button setFrame:CGRectMake(CGPointZero.x, CGPointZero.y, 30, 30)];
     [button setBackgroundImage:[UIImage imageNamed:@"car"] forState:UIControlStateNormal];
@@ -288,7 +236,7 @@ MKRoute *route;
     [searchBar setText:@""];
     
     [self.mapKit setRegion:region animated:YES];
-
+    
 }
 
 - (void)handleLongPress:(UIGestureRecognizer *)gestureRecognizer
@@ -320,4 +268,34 @@ MKRoute *route;
      }];
 }
 
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
+    NSLog(@"touches began");
+    UITouch *touch = [touches anyObject];
+    if(![touch.view isKindOfClass:[self.mapKit class]])
+    {
+        if(self.segmentControll.hidden)
+            [self.segmentControll setHidden:NO];
+        else if(!self.segmentControll.hidden) [self.segmentControll setHidden:YES];
+    }
+}
+
+- (void) addBottomSheetView{
+    BottomSheetViewController *bottomSheetVC = [[BottomSheetViewController alloc] init];
+    
+    bottomSheetVC.currentLocation = destinationLocation;
+    bottomSheetVC.destinationName = self.destinationName;
+    bottomSheetVC.destinationCity = self.destinationCity;
+    bottomSheetVC.destinationState = self.destinationState;
+    
+    [self addChildViewController:bottomSheetVC];
+    [self.view addSubview:bottomSheetVC.view];
+    [bottomSheetVC didMoveToParentViewController:self];
+    
+    double height = self.view.frame.size.height;
+    double width = self.view.frame.size.width;
+    
+    [bottomSheetVC.view setFrame:CGRectMake(0, CGRectGetMaxY(self.view.frame), width, height)];
+}
+
 @end
+

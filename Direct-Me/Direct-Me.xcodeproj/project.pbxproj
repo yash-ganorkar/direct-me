@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5820078E21350E21000D8C3F /* BottomSheetViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5820078C21350E21000D8C3F /* BottomSheetViewController.m */; };
+		5820078F21350E21000D8C3F /* BottomSheetViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5820078D21350E21000D8C3F /* BottomSheetViewController.xib */; };
 		5844C011212A10F3000EE25B /* LocationSearchTable.m in Sources */ = {isa = PBXBuildFile; fileRef = 5844C010212A10F3000EE25B /* LocationSearchTable.m */; };
 		58ADAB29212728D5000BF341 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 58ADAB28212728D5000BF341 /* AppDelegate.m */; };
 		58ADAB2C212728D5000BF341 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 58ADAB2B212728D5000BF341 /* ViewController.m */; };
@@ -37,6 +39,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		5820078B21350E21000D8C3F /* BottomSheetViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BottomSheetViewController.h; sourceTree = "<group>"; };
+		5820078C21350E21000D8C3F /* BottomSheetViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BottomSheetViewController.m; sourceTree = "<group>"; };
+		5820078D21350E21000D8C3F /* BottomSheetViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BottomSheetViewController.xib; sourceTree = "<group>"; };
+		5820079021365B08000D8C3F /* HandleRoutes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HandleRoutes.h; sourceTree = "<group>"; };
 		5844C00F212A10F3000EE25B /* LocationSearchTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LocationSearchTable.h; sourceTree = "<group>"; };
 		5844C010212A10F3000EE25B /* LocationSearchTable.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LocationSearchTable.m; sourceTree = "<group>"; };
 		58ADAB24212728D5000BF341 /* Direct-Me.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Direct-Me.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -119,6 +125,10 @@
 				58ADAB36212728D7000BF341 /* main.m */,
 				5844C00F212A10F3000EE25B /* LocationSearchTable.h */,
 				5844C010212A10F3000EE25B /* LocationSearchTable.m */,
+				5820078B21350E21000D8C3F /* BottomSheetViewController.h */,
+				5820078C21350E21000D8C3F /* BottomSheetViewController.m */,
+				5820078D21350E21000D8C3F /* BottomSheetViewController.xib */,
+				5820079021365B08000D8C3F /* HandleRoutes.h */,
 			);
 			path = "Direct-Me";
 			sourceTree = "<group>";
@@ -260,6 +270,7 @@
 				58ADAB34212728D7000BF341 /* LaunchScreen.storyboard in Resources */,
 				58ADAB31212728D7000BF341 /* Assets.xcassets in Resources */,
 				58ADAB2F212728D5000BF341 /* Main.storyboard in Resources */,
+				5820078F21350E21000D8C3F /* BottomSheetViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -286,6 +297,7 @@
 			files = (
 				58ADAB2C212728D5000BF341 /* ViewController.m in Sources */,
 				5844C011212A10F3000EE25B /* LocationSearchTable.m in Sources */,
+				5820078E21350E21000D8C3F /* BottomSheetViewController.m in Sources */,
 				58ADAB37212728D7000BF341 /* main.m in Sources */,
 				58ADAB29212728D5000BF341 /* AppDelegate.m in Sources */,
 			);

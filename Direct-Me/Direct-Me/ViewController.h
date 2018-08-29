@@ -8,12 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import <MapKit/MapKit.h>
-
-@protocol DestinationAddressDelegate <NSObject>
-
-- (void) didFinishEnteringItem:(NSString *)item;
-
-@end
+#import "HandleRoutes.h"
 
 @protocol HandleMapSearch
 - (void) dropPinZoomIn:(MKPlacemark *)placeMark;
@@ -44,6 +39,8 @@
 //- (IBAction)test:(id)sender;
 
 - (IBAction)mapViewTypeChanged:(id)sender;
+
+@property(nonatomic, strong) id <HandleRoutes> handleRoutesDelegate;
 
 
 @end

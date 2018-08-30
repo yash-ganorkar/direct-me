@@ -14,6 +14,8 @@
     MKPolyline *routeOverlay;
     
     BOOL routeOverlaySet;
+
+    BottomSheetViewController *bottomSheetVC;
 }
     @property (weak, nonatomic) NSString *data;
 @property (weak,nonatomic) NSString *destinationCity;
@@ -117,24 +119,23 @@ MKRoute *route;
         }
         
         [self plotRouteOnMap:response.routes];
-        [self addBottomSheetView];
+        [self addBottomSheetView:response.routes];
     }];
 }
 
 - (void)plotRouteOnMap:(NSArray<MKRoute *>*)route
 {
-    if(routeOverlaySet) {
-        for (id<MKOverlay> overlay in self.mapKit.overlays)
-        {
-            [self.mapKit removeOverlay:overlay];
-        }
-    }
+//    if(routeOverlaySet) {
+//        for (id<MKOverlay> overlay in self.mapKit.overlays)
+//        {
+//            [self.mapKit removeOverlay:overlay];
+//        }
+//    }
     
+ //   routeOverlaySet = true;
     [self.handleRoutesDelegate listRoutes:route];
-
-    NSLog(@"%@",[NSString stringWithFormat:@"Smallest Distnace -> %f", route[0].distance]);
-            routeOverlay = route[0].polyline;
-            [self.mapKit addOverlay:routeOverlay];
+//            routeOverlay = route[0].polyline;
+//            [self.mapKit addOverlay:routeOverlay];
 
 }
 
@@ -279,13 +280,21 @@ MKRoute *route;
     }
 }
 
-- (void) addBottomSheetView{
-    BottomSheetViewController *bottomSheetVC = [[BottomSheetViewController alloc] init];
+- (void) addBottomSheetView:(NSArray<MKRoute *>*) routes{
     
-    bottomSheetVC.currentLocation = destinationLocation;
+    if(bottomSheetVC) {
+        [bottomSheetVC willMoveToParentViewController:nil];
+        [self.view willRemoveSubview:bottomSheetVC.view];
+        [bottomSheetVC.view removeFromSuperview];
+        [bottomSheetVC removeFromParentViewController];
+    }
+    
+    bottomSheetVC = [[BottomSheetViewController alloc] init];
+    
     bottomSheetVC.destinationName = self.destinationName;
     bottomSheetVC.destinationCity = self.destinationCity;
     bottomSheetVC.destinationState = self.destinationState;
+    bottomSheetVC.routesAvailable = routes;
     
     [self addChildViewController:bottomSheetVC];
     [self.view addSubview:bottomSheetVC.view];
